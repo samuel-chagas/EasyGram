@@ -18,6 +18,7 @@ import { enviroment } from '../../env/enviroment';
 interface Contato {
   id: string; // Substitua por campos reais do seu backend
   nome: string;
+  numero: string;
 }
 
 const ContatosScreen: React.FC = () => {
@@ -65,13 +66,36 @@ const ContatosScreen: React.FC = () => {
       ) : (
         <FlatList
           data={contatos}
-          keyExtractor={(item) => item.id} // Usando um identificador único
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.contactContainer}>
-              <Text style={styles.contactText}>{item.nome}</Text>
+            <View style={styles.contactCard}>
+              <View style={styles.contactRow}>
+                {/* Avatar */}
+                <View style={styles.avatarWrapper}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.contactInitialName}>{item.nome.charAt(0)}</Text>
+                    
+                  </View>
+                  <View style={styles.statusIndicator}></View>
+                </View>
+
+                {/* Nome e Telefone */}
+                <View style={styles.contactInfo}>
+                  <Text style={styles.contactName}>{item.nome}</Text>
+                  <Text style={styles.contactPhone}>{item.numero}</Text>
+
+                  {/* <Text style={styles.contactPhone}>{item.telefone}</Text> */}
+                </View>
+
+                {/* Ícone de ações */}
+                <View style={styles.actions}>
+                  <Text style={styles.dots}>⋮</Text>
+                </View>
+              </View>
             </View>
           )}
         />
+
       )}
       <Modal
         visible={modalVisible}
@@ -114,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0d7875',
     width: 40,
     height: 40,
-    borderRadius: 20,      
+    borderRadius: 32,      
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -160,6 +184,135 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  contactCard: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#CBFCF3',
+    borderWidth: 1,
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 24,
+    borderBottomColor: '#E3E8EF',
+    borderBottomWidth: 1,
+  },
+  avatarWrapper: {
+    width: 64,
+    height: 64,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statusIndicator: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#5CECDD',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    bottom: 4,
+    right: 4,
+  },
+  contactInfo: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  contactInitialName: {
+    color: '#fff'
+  },
+  contactName: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#001D22',
+  },
+  contactPhone: {
+    fontSize: 16,
+    color: '#97A3B6',
+  },
+  actions: {
+    width: 38,
+    height: 38,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dots: {
+    fontSize: 18,
+    color: '#060606',
+  },
 });
+
+// const styles = StyleSheet.create({
+//   contactCard: {
+//     backgroundColor: '#FFFFFF',
+//     borderColor: '#CBFCF3',
+//     borderWidth: 1,
+//     borderRadius: 16,
+//     marginBottom: 16,
+//     overflow: 'hidden',
+//   },
+//   contactRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     padding: 16,
+//     gap: 24,
+//     borderBottomColor: '#E3E8EF',
+//     borderBottomWidth: 1,
+//   },
+//   avatarWrapper: {
+//     width: 64,
+//     height: 64,
+//     position: 'relative',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   avatar: {
+//     width: 64,
+//     height: 64,
+//     borderRadius: 32,
+//     backgroundColor: '#0d7875',
+//   },
+//   statusIndicator: {
+//     position: 'absolute',
+//     width: 12,
+//     height: 12,
+//     borderRadius: 6,
+//     backgroundColor: '#5CECDD',
+//     borderWidth: 2,
+//     borderColor: '#FFFFFF',
+//     bottom: 4,
+//     right: 4,
+//   },
+//   contactInfo: {
+//     flex: 1,
+//     flexDirection: 'column',
+//     justifyContent: 'center',
+//   },
+//   contactName: {
+//     fontSize: 20,
+//     fontWeight: '500',
+//     color: '#001D22',
+//   },
+//   contactPhone: {
+//     fontSize: 16,
+//     color: '#97A3B6',
+//   },
+//   actions: {
+//     width: 38,
+//     height: 38,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   dots: {
+//     fontSize: 18,
+//     color: '#060606',
+//   },
+// });
+
 
 export default ContatosScreen;
