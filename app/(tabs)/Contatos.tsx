@@ -82,15 +82,13 @@ const ContatosScreen: React.FC = () => {
                 {/* Nome e Telefone */}
                 <View style={styles.contactInfo}>
                   <Text style={styles.contactName}>{item.nome}</Text>
-                  <Text style={styles.contactPhone}>{item.numero}</Text>
-
-                  {/* <Text style={styles.contactPhone}>{item.telefone}</Text> */}
+                  <Text style={styles.contactPhone}>{item.numero}</Text>                  
                 </View>
 
                 {/* Ícone de ações */}
-                <View style={styles.actions}>
+                <TouchableOpacity style={styles.actions}>
                   <Text style={styles.dots}>⋮</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           )}
