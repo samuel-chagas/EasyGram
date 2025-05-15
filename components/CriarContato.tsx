@@ -1,27 +1,48 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { enviroment } from '../env/enviroment'; 
-import { ModalProps } from '../types/modal-props'; // Ajuste o caminho conforme necessário
-import { Grupos } from '../interfaces/grupos';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import Feather from 'react-native-vector-icons/Feather';
-
-
+import { enviroment } from '../env/enviroment';
+import { ModalProps } from '../types/modal-props'; // Ajuste o caminho conforme necessário
 
 export default function CriarContato({ onClose, onSuccess }: ModalProps) {  
   const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const [numero, setTelefone] = useState('');
   const [email, setEmail] = useState('');
-  const [grupo, setGrupo] = useState<Grupos>();
+  const [grupoId, setGrupo] = useState(null);
+  const [open, setOpen] = useState(false); // controla abertura  
+  const [items, setItems] = useState<{ label: string; value: string | number }[]>([]);
 
   const salvarContato = async () => {
+    console.log("[salvarContato]", nome, numero, email, grupoId);
+    
     try {
-      await axios.post(enviroment.API_URL + '/contatos', { nome, telefone, email, grupo });
-      alert('Contato salvo com sucesso!');  
+      await axios.post(enviroment.API_URL + '/contatos', { nome, numero, email, grupoId });    
       onSuccess();
     } catch (err) {
-      alert('Erro ao salvar');
+      console.error("Erro ao criar contato", err);       
     }
   };
+
+  
+  useEffect(() => {    
+    const listarGrupos = async () => {
+      try {
+        const response = await axios.get<any[]>(`${enviroment.API_URL}/grupos`);    
+
+        const gruposFormatados: any = response.data.map((grupo) => ({
+          label: grupo.nome, // ou outro campo legível
+          value: grupo.id,   // o campo que será armazenado em `grupo`
+        }));
+        setItems(gruposFormatados);
+      } catch (err) {
+        console.error("Erro ao carregar grupos", err);        
+      }    
+    }
+
+    listarGrupos();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -32,11 +53,21 @@ export default function CriarContato({ onClose, onSuccess }: ModalProps) {
       <Text style={styles.titulo}>Novo contato</Text>
 
       <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
-      <TextInput style={styles.input} placeholder="Telefone" value={telefone} onChangeText={setTelefone} />
+      <TextInput style={styles.input} placeholder="Telefone" value={numero} onChangeText={setTelefone} />
       <TextInput style={styles.input} placeholder="E-mail" value={email} onChangeText={setEmail} />
       {/* TROCAR POR UM SELECT de grupos */}
-      {/* <TextInput style={styles.input} placeholder="Grupo" value={grupo} onChangeText={setGrupo} /> */}
-
+      {/* <TextInput style={styles.input} placeholder="Grupo" value={grupo} onChangeText={setGrupos} /> */}
+      <DropDownPicker
+        open={open}
+        value={grupoId}
+        items={items}
+        setOpen={setOpen}
+        setValue={setGrupo}
+        setItems={setItems}
+        placeholder="Selecione um grupo"
+        style={styles.input}
+        dropDownContainerStyle={styles.dropdownContainer}
+      />
       <TouchableOpacity style={styles.cancelar} onPress={onClose}>
         <Text style={styles.cancelarTexto}>Cancelar</Text>
       </TouchableOpacity>
@@ -108,5 +139,12 @@ const styles = StyleSheet.create({
   salvarTexto: {
     color: '#fff',
     fontSize: 16
-  }
+  },
+  dropdown: {
+    borderColor: '#ccc',
+    height: 50,    
+  },
+  dropdownContainer: {
+    borderColor: '#ccc',
+  },
 });

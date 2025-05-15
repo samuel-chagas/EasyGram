@@ -1,15 +1,16 @@
+import api from '@/api';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
+  Image,
+  SafeAreaView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image
+  View
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import Footer from '../../components/Footer'; 
+import Footer from '../../components/Footer';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,21 @@ const LoginScreen: React.FC = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const router = useRouter();
 
+  const handleLogin = async () => {
+    try {
+      const response = await api.post('/auth/login', {
+        email: email,
+        senha: senha,      
+      });
+      console.log("[handleLogin]", response);
+      
+      if (response.data) {        
+        router.push('../../(tabs)/Contatos'); // Redirecionando para a rota correta
+      } 
+    } catch (error) {
+      console.error('Erro na requisição de login:', error);      
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
@@ -78,7 +94,10 @@ const LoginScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity 
+        style={styles.loginButton}
+        onPress={handleLogin}
+        >
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
 
