@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Modal
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import { enviroment } from '../../env/enviroment'; 
+import React, { useEffect, useState } from 'react';
+import {
+  FlatList,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import CriarContato from '../../components/CriarContato';
-import Footer from '../../components/Footer'; 
+import Footer from '../../components/Footer';
+import { enviroment } from '../../env/enviroment';
 
 // Definição do tipo Contato
 interface Contato {
   id: string; // Substitua por campos reais do seu backend
   nome: string;
+  numero: string;
 }
 
 const ContatosScreen: React.FC = () => {
@@ -42,10 +42,14 @@ const ContatosScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Contatos</Text>
-        <Image
+        {/* <Image
           source={{ uri: 'https://via.placeholder.com/40' }}
           style={styles.avatar}
-        />
+        /> */}
+        <TouchableOpacity style={styles.avatar} onPress={() => setModalVisible(true)}>
+          <Ionicons name="add" size={16} color="#fff" />          
+        </TouchableOpacity>
+
       </View>
 
       {contatos.length === 0 ? (
@@ -62,13 +66,33 @@ const ContatosScreen: React.FC = () => {
       ) : (
         <FlatList
           data={contatos}
-          keyExtractor={(item) => item.id} // Usando um identificador único
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.contactContainer}>
-              <Text style={styles.contactText}>{item.nome}</Text>
+            <View style={styles.contactCard}>
+              <View style={styles.contactRow}>
+                {/* Avatar */}
+                <View style={styles.avatarWrapper}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.contactInitialName}>{item.nome.charAt(0)}</Text>    
+                  </View>
+                  <View style={styles.statusIndicator}></View>
+                </View>
+
+                {/* Nome e Telefone */}
+                <View style={styles.contactInfo}>
+                  <Text style={styles.contactName}>{item.nome}</Text>
+                  <Text style={styles.contactPhone}>{item.numero}</Text>                  
+                </View>
+
+                {/* Ícone de ações */}
+                <TouchableOpacity style={styles.actions}>
+                  <Text style={styles.dots}>⋮</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
+
       )}
       <Modal
         visible={modalVisible}
@@ -77,7 +101,10 @@ const ContatosScreen: React.FC = () => {
       >
         <CriarContato
           onClose={() => setModalVisible(false)}
-          onSuccess={carregarContatos}
+          onSuccess={() => {
+            setModalVisible(false);
+            carregarContatos();
+          }}
         />
       </Modal>
        {/* Renderizando o Footer */}
@@ -93,8 +120,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    alignItems: 'center',
+    display: 'flex',    
     marginTop: 20,
+    flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
   },
@@ -104,9 +132,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   avatar: {
+    backgroundColor: '#0d7875',
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 32,      
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyState: {
     flex: 1,
@@ -149,6 +180,67 @@ const styles = StyleSheet.create({
   contactText: {
     fontSize: 16,
     color: '#333',
+  },
+  contactCard: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#CBFCF3',
+    borderWidth: 1,
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 24,
+    borderBottomColor: '#E3E8EF',
+    borderBottomWidth: 1,
+  },
+  avatarWrapper: {
+    width: 64,
+    height: 64,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statusIndicator: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#5CECDD',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    bottom: 4,
+    right: 4,
+  },
+  contactInfo: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  contactInitialName: {
+    color: '#fff'
+  },
+  contactName: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#001D22',
+  },
+  contactPhone: {
+    fontSize: 16,
+    color: '#97A3B6',
+  },
+  actions: {
+    width: 38,
+    height: 38,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dots: {
+    fontSize: 18,
+    color: '#060606',
   },
 });
 
