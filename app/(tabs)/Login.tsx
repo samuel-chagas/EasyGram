@@ -24,8 +24,6 @@ const LoginScreen: React.FC = () => {
         email: email,
         senha: senha,      
       });
-      console.log("[handleLogin]", response);
-      
       if (response.data) {        
         router.push('../../(tabs)/Contatos'); // Redirecionando para a rota correta
       } 

@@ -15,8 +15,6 @@ export default function CriarContato({ onClose, onSuccess }: ModalProps) {
   const [items, setItems] = useState<{ label: string; value: string | number }[]>([]);
 
   const salvarContato = async () => {
-    console.log("[salvarContato]", nome, numero, email, grupoId);
-    
     try {
       await axios.post(enviroment.API_URL + '/contatos', { nome, numero, email, grupoId });    
       onSuccess();

@@ -73,8 +73,7 @@ const ContatosScreen: React.FC = () => {
                 {/* Avatar */}
                 <View style={styles.avatarWrapper}>
                   <View style={styles.avatar}>
-                    <Text style={styles.contactInitialName}>{item.nome.charAt(0)}</Text>
-                    
+                    <Text style={styles.contactInitialName}>{item.nome.charAt(0)}</Text>    
                   </View>
                   <View style={styles.statusIndicator}></View>
                 </View>
