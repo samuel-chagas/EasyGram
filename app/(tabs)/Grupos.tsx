@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { enviroment } from '../../env/enviroment';
+
 import Footer from '../../components/Footer';
 // import CriarGrupo from '../../components/CriarGrupo'; // Crie este componente se desejar modal para criar grupo
 

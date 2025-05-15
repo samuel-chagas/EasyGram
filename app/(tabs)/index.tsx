@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'expo-router';
-import { View, Text, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 const Index = () => {
     const router = useRouter();
