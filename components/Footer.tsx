@@ -14,6 +14,9 @@ const Footer: React.FC = () => {
       <TouchableOpacity onPress={() => router.push('/(tabs)/Contatos')}>
         <Icon name="person" size={24} color="#0D7875" /> {/* Ícone de Perfil */}
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/(tabs)/Grupos')}>
+        <Icon name="group" size={24} color="#0D7875" /> {/* Ícone de Perfil */}
+      </TouchableOpacity>
     </View>
   );
 };

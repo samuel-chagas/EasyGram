@@ -14,7 +14,7 @@ import axios from 'axios';
 import { enviroment } from '../../env/enviroment';
 
 import Footer from '../../components/Footer';
-// import CriarGrupo from '../../components/CriarGrupo'; // Crie este componente se desejar modal para criar grupo
+ import CriarGrupo from '../../components/CriarGrupo'; // Crie este componente se desejar modal para criar grupo
 
 import { Grupos } from '../../interfaces/grupos';
 
@@ -70,7 +70,7 @@ const GruposScreen: React.FC = () => {
           )}
         />
       )}
-      {/* <Modal
+      { <Modal
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
@@ -79,7 +79,7 @@ const GruposScreen: React.FC = () => {
           onClose={() => setModalVisible(false)}
           onSuccess={carregarGrupos}
         />
-      </Modal> */}
+      </Modal> }
       <Footer />
     </SafeAreaView>
   );
