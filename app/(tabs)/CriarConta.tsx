@@ -11,6 +11,7 @@ import {
     Image,
     SafeAreaView
 } from "react-native";
+import { useRouter } from 'expo-router';
 
 type Action = 
     | { type: 'SET_INPUT'; field: string; value: string; }
@@ -26,6 +27,7 @@ const initialState: FormState = {
     isLoading: false,
     isSubmitted: false,
     showPassword: false
+    
 };
 
 type FormState = {
@@ -55,6 +57,7 @@ function formReducer(state: FormState, action: Action) {
 
 const CreateAccountScreen: React.FC = () => {
     const [state, dispatch] = useReducer(formReducer, initialState);
+     const router = useRouter();
 
     const handleChange = (event: NativeSyntheticEvent<TextInputChangeEventData>, fieldName: string) => {
         dispatch({
@@ -136,6 +139,9 @@ const CreateAccountScreen: React.FC = () => {
                 >
                     <Text style={styles.buttonText}>Criar Conta</Text>
                 </TouchableOpacity>
+                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                        <Text style={styles.backButtonText}>Voltar</Text>
+                      </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
@@ -196,6 +202,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
+
+     backButton: {
+    marginTop: 16,
+    backgroundColor: '#F0FDFB',
+    height: 48,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default CreateAccountScreen;
