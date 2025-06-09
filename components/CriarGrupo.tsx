@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { enviroment } from '../env/enviroment';
 
 interface CriarGrupoProps {
-  onClose: () => void;
+  onClose: () => void; // igual ao CriarContato
   onSuccess: () => void;
 }
 
+const CORES = ['#00C897', '#FF6F61', '#FFD600', '#1976D2', '#8E24AA', '#43A047', '#F4511E'];
+
 const CriarGrupo: React.FC<CriarGrupoProps> = ({ onClose, onSuccess }) => {
   const [nome, setNome] = useState('');
-  const [cor, setCor] = useState('#00897B');
+  const [cor, setCor] = useState(CORES[0]);
 
   const criarGrupo = async () => {
     if (!nome.trim()) {
@@ -31,76 +34,132 @@ const CriarGrupo: React.FC<CriarGrupoProps> = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Criar novo grupo</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nome do grupo"
-        value={nome}
-        onChangeText={setNome}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Cor (hexadecimal)"
-        value={cor}
-        onChangeText={setCor}
-      />
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.createButton} onPress={criarGrupo}>
-          <Text style={styles.buttonText}>Criar</Text>
-        </TouchableOpacity>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={[styles.iconCircle, { backgroundColor: cor }]}>
+        <MaterialIcons name="bookmark" size={36} color="#fff" />
       </View>
-    </View>
+      <Text style={styles.title}>Novo grupo</Text>
+      <View style={styles.inputContainer}>
+        <MaterialIcons name="bookmark-border" size={24} color="#90A4AE" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Nome do grupo"
+          value={nome}
+          onChangeText={setNome}
+          placeholderTextColor="#90A4AE"
+        />
+      </View>
+      <Text style={{ color: '#333', marginBottom: 8, alignSelf: 'flex-start' }}>Escolha a cor do grupo:</Text>
+      <View style={styles.colorOptionsContainer}>
+        {CORES.map((c) => (
+          <TouchableOpacity
+            key={c}
+            style={[
+              styles.colorOption,
+              { backgroundColor: c, borderWidth: cor === c ? 3 : 1, borderColor: cor === c ? '#333' : '#ccc' },
+            ]}
+            onPress={() => setCor(c)}
+          />
+        ))}
+      </View>
+      <TouchableOpacity
+        style={styles.salvar}
+        onPress={criarGrupo}
+      >
+        <Text style={styles.salvarTexto}>Salvar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.cancelar}
+        onPress={onClose}
+      >
+        <Text style={styles.cancelarTexto}>Cancelar</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#E3F2FD',
-    padding: 24,
+    backgroundColor: '#fff',
+    padding: 25,
+    margin: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    flexGrow: 1,
     justifyContent: 'center',
+    elevation: 4,
+  },
+  iconCircle: {
+    backgroundColor: '#00C897',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
+    marginBottom: 25,
     fontWeight: 'bold',
-    marginBottom: 24,
-    textAlign: 'center',
+    color: '#333',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#F8F8F8',
+    paddingHorizontal: 12,
+    marginBottom: 20,
+    width: '100%',
+    height: 48,
+  },
+  inputIcon: {
+    marginRight: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#B0BEC5',
+    flex: 1,
+    fontSize: 16,
+    color: '#263238',
+  },
+  colorOptionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    width: '100%',
+    marginBottom: 32,
+    gap: 12,
+  },
+  colorOption: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 8,
+  },
+  cancelar: {
+    marginTop: 10,
+    width: '100%',
+    backgroundColor: '#E8E8E8',
+    paddingVertical: 14,
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  cancelarTexto: {
+    color: '#333',
     fontSize: 16,
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  cancelButton: {
-    backgroundColor: '#B0BEC5',
-    padding: 12,
+  salvar: {
+    width: '100%',
+    backgroundColor: '#00C897',
+    paddingVertical: 14,
     borderRadius: 8,
-    flex: 1,
-    marginRight: 8,
     alignItems: 'center',
   },
-  createButton: {
-    backgroundColor: '#00897B',
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    marginLeft: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
+  salvarTexto: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

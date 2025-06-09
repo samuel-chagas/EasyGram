@@ -1,8 +1,7 @@
 export type Contato = {
     id?: number;
     nome: string;
-    telefone: string;
+    numero: string; // Alterado de telefone para numero
     email: string;
     grupo: string;
 }
-  
