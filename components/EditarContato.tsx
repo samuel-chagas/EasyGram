@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import { enviroment } from '../env/enviroment';
 
@@ -14,19 +13,19 @@ interface Contato {
 }
 
 interface EditarContatoProps {
+  contato: Contato; // Adicionar a prop 'contato'
   onClose: () => void;
+  onSuccess: () => void; // Adicionar a prop 'onSuccess'
 }
 
-export default function EditarContato({ onClose }: EditarContatoProps) {
-  const navigation = useNavigation();
-  const [contato, setContato] = useState<Contato>({
-    id: 1,
-    nome: '',
-    telefone: '',
-    email: '',
-    grupo: ''
-  });
+// Atualizar as props desestruturadas
+export default function EditarContato({ contato: initialContato, onClose, onSuccess }: EditarContatoProps) {
+  // const navigation = useNavigation(); // Removido
+  // Inicializar o estado 'contato' com a prop 'initialContato' recebida
+  const [contato, setContato] = useState<Contato>(initialContato);
 
+  // Remover o useEffect, pois o contato agora é passado via props
+  /*
   useEffect(() => {
     const fetchContato = async () => {
       try {
@@ -39,6 +38,7 @@ export default function EditarContato({ onClose }: EditarContatoProps) {
 
     fetchContato();
   }, [contato.id]);
+  */
 
   const atualizarContato = async () => {
     if (!contato.nome || !contato.telefone || !contato.email || !contato.grupo) {
@@ -49,7 +49,7 @@ export default function EditarContato({ onClose }: EditarContatoProps) {
     try {
       await axios.put(`${enviroment.API_URL}/contatos/${contato.id}`, contato);
       Alert.alert('Sucesso', 'Contato atualizado!');
-      navigation.goBack();
+      onSuccess(); // Chamar a função onSuccess passada como prop
     } catch (error) {
       Alert.alert('Erro', 'Erro ao atualizar o contato');
     }

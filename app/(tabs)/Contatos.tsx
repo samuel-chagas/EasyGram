@@ -1,7 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
+  Alert // Adicionar Alert aqui
+  ,
+
   FlatList,
   Modal,
   SafeAreaView,
@@ -10,33 +12,54 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import CriarContato from '../../components/CriarContato';
+import EditarContato from '../../components/EditarContato';
 import Footer from '../../components/Footer';
 import { enviroment } from '../../env/enviroment';
+import { Contato as BaseContato } from '../../interfaces/contato'; // Importar como BaseContato
 
-// Definição do tipo Contato
-interface Contato {
-  id: string; // Substitua por campos reais do seu backend
-  nome: string;
-  numero: string;
+// Definir ContatoComId para uso interno, garantindo que id é number e obrigatório para edição
+interface ContatoComId extends BaseContato {
+  id: number;
 }
 
 const ContatosScreen: React.FC = () => {
-  const [contatos, setContatos] = useState<Contato[]>([]);
+  const [contatos, setContatos] = useState<BaseContato[]>([]); // Usar BaseContato
   const [modalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false); 
+  const [contatoParaEditar, setContatoParaEditar] = useState<ContatoComId | null>(null); // Usar ContatoComId
 
   const carregarContatos = async () => {
     try {
-      const response = await axios.get<Contato[]>(enviroment.API_URL + '/contatos');
-      setContatos(response.data);
+      const response = await axios.get<BaseContato[]>(`${enviroment.API_URL}/contatos`); // Usar BaseContato
+      // Ordenar os contatos para que os mais recentes (maior ID) apareçam primeiro.
+      // Trata IDs undefined como menores para que fiquem no final se a ordenação for decrescente.
+      const contatosOrdenados = response.data.sort((a, b) => {
+        const idA = a.id === undefined ? -Infinity : a.id; // IDs undefined são considerados os menores
+        const idB = b.id === undefined ? -Infinity : b.id;
+        return idB - idA; // Ordem decrescente (IDs maiores primeiro)
+      });
+      setContatos(contatosOrdenados);
     } catch (err) {
       console.error('Erro ao carregar contatos:', err);
+      Alert.alert('Erro', 'Não foi possível carregar os contatos. Tente novamente.');
     }
   };
 
   useEffect(() => {
     carregarContatos();
   }, []);
+
+  const abrirModalEdicao = (contato: BaseContato) => { // Recebe BaseContato
+    if (typeof contato.id !== 'number') { // Verificar se id é um número
+      console.error("Contato sem ID numérico válido não pode ser editado.", contato);
+      Alert.alert('Erro', 'ID do contato inválido para edição.');
+      return;
+    }
+    setContatoParaEditar(contato as ContatoComId); // Cast para ContatoComId
+    setEditModalVisible(true);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -66,7 +89,7 @@ const ContatosScreen: React.FC = () => {
       ) : (
         <FlatList
           data={contatos}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id !== undefined ? item.id.toString() : Math.random().toString()} // Lidar com id opcional para keyExtractor
           renderItem={({ item }) => (
             <View style={styles.contactCard}>
               <View style={styles.contactRow}>
@@ -81,11 +104,11 @@ const ContatosScreen: React.FC = () => {
                 {/* Nome e Telefone */}
                 <View style={styles.contactInfo}>
                   <Text style={styles.contactName}>{item.nome}</Text>
-                  <Text style={styles.contactPhone}>{item.numero}</Text>                  
+                  <Text style={styles.contactPhone}>{item.numero}</Text> {/* Mantém item.numero */}
                 </View>
 
                 {/* Ícone de ações */}
-                <TouchableOpacity style={styles.actions}>
+                <TouchableOpacity style={styles.actions} onPress={() => abrirModalEdicao(item)}>
                   <Text style={styles.dots}>⋮</Text>
                 </TouchableOpacity>
               </View>
@@ -107,6 +130,24 @@ const ContatosScreen: React.FC = () => {
           }}
         />
       </Modal>
+
+      {/* Modal para Editar Contato */}
+      {contatoParaEditar && ( 
+        <Modal
+          visible={editModalVisible}
+          animationType="slide"
+          onRequestClose={() => setEditModalVisible(false)}
+        >
+          <EditarContato
+            contato={contatoParaEditar} // Passa ContatoComId
+            onClose={() => setEditModalVisible(false)}
+            onSuccess={() => {
+              setEditModalVisible(false);
+              carregarContatos();
+            }}
+          />
+        </Modal>
+      )}
        {/* Renderizando o Footer */}
        <Footer />
     </SafeAreaView>

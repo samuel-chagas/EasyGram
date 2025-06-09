@@ -25,7 +25,10 @@ const GruposScreen: React.FC = () => {
   const carregarGrupos = async () => {
     try {
       const response = await axios.get<Grupos[]>(enviroment.API_URL + '/grupos');
-      setGrupos(response.data);
+      const gruposOrdenados = response.data.sort(
+        (a, b) => new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
+      );
+      setGrupos(gruposOrdenados);
     } catch (err) {
       console.error('Erro ao carregar grupos:', err);
     }
@@ -40,7 +43,7 @@ const GruposScreen: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Grupos</Text>
         <TouchableOpacity style={styles.headerButton} onPress={() => setModalVisible(true)}>
-          <Ionicons name="add-circle" size={32} color="#00897B" />
+          <Ionicons name="add-circle" size={32} color="#00897B"/>
         </TouchableOpacity>
         <Image
           source={{ uri: 'https://via.placeholder.com/40' }}
@@ -50,7 +53,7 @@ const GruposScreen: React.FC = () => {
 
       {grupos.length === 0 ? (
         <View style={styles.emptyState}>
-          <Ionicons name="people-circle-outline" size={50} color="#B0BEC5" />
+          <Ionicons name="people-circle-outline" size={50} color="#B0BEC5"/>
           <Text style={styles.emptyText}>
             Você ainda não faz parte de nenhum grupo! Que tal criar um?
           </Text>
@@ -73,8 +76,7 @@ const GruposScreen: React.FC = () => {
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
-        transparent
-      >
+        transparent>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
           <CriarGrupo
             onClose={() => setModalVisible(false)}
