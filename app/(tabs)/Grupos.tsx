@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Modal
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import {
+  FlatList,
+  Image,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { enviroment } from '../../env/enviroment';
 
+import CriarGrupo from '../../components/CriarGrupo';
 import Footer from '../../components/Footer';
- import CriarGrupo from '../../components/CriarGrupo'; // Crie este componente se desejar modal para criar grupo
 
 import { Grupos } from '../../interfaces/grupos';
 
@@ -39,6 +39,9 @@ const GruposScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Grupos</Text>
+        <TouchableOpacity style={styles.headerButton} onPress={() => setModalVisible(true)}>
+          <Ionicons name="add-circle" size={32} color="#00897B" />
+        </TouchableOpacity>
         <Image
           source={{ uri: 'https://via.placeholder.com/40' }}
           style={styles.avatar}
@@ -51,10 +54,6 @@ const GruposScreen: React.FC = () => {
           <Text style={styles.emptyText}>
             Você ainda não faz parte de nenhum grupo! Que tal criar um?
           </Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-            <Ionicons name="add" size={20} color="#fff" />
-            <Text style={styles.addButtonText}>Novo grupo</Text>
-          </TouchableOpacity>
         </View>
       ) : (
         <FlatList
@@ -70,16 +69,19 @@ const GruposScreen: React.FC = () => {
           )}
         />
       )}
-      { <Modal
+      <Modal
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
+        transparent
       >
-        <CriarGrupo
-          onClose={() => setModalVisible(false)}
-          onSuccess={carregarGrupos}
-        />
-      </Modal> }
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+          <CriarGrupo
+            onClose={() => setModalVisible(false)}
+            onSuccess={carregarGrupos}
+          />
+        </View>
+      </Modal>
       <Footer />
     </SafeAreaView>
   );
@@ -92,15 +94,20 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
     justifyContent: 'space-between',
+    marginTop: 20,
     marginBottom: 20,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    flex: 1,
+  },
+  headerButton: {
+    marginRight: 12,
   },
   avatar: {
     width: 40,
@@ -150,6 +157,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     fontWeight: 'bold',
+   
   },
   groupDate: {
     fontSize: 12,
